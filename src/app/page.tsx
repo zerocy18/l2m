@@ -1,102 +1,78 @@
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
-import styles from './page.module.css'
+"use client";
 
-const inter = Inter({ subsets: ['latin'] })
+import Image from "next/image";
+import { Inter } from "next/font/google";
+import styles from "./page.module.css";
+import { useState, useEffect } from "react";
+import Item from "../../components/Item";
+import { ItemProps } from "../../components/Item/Item";
+
+const inter = Inter({ subsets: ["latin"] });
+async function searchAPITest(apiKey: string, url: string, params: any) {
+  const searchParams = new URLSearchParams(params);
+  const response = await fetch(url + "?" + searchParams, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+  });
+
+  return response.json();
+}
 
 export default function Home() {
+  const [contents, setContents] = useState<ItemProps[]>([]);
+  const url = "https://dev-api.plaync.com/l2m/v1.0/market/items/search"; // API URL
+  const auth =
+    "eyJraWQiOiJlMzVmZTBiYi0xMGM0LTRlMDYtOTRiOC1lNGQ0MGQ2NGM5OTQiLCJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1aWQiOiI4RjQ2MTU5NC04MzlFLTRFQUQtODVDOS1FN0Y1RDQyMkZFQTQifQ.KxUYBe9ypXH1e5_JpaQjvh1Hg7Wj0ubPfGChjSNj0sslpCoGA-Xj-I7xsKawTR-IzIpJt4EVyLgA8ViQWpZZ2go3xyBd_71hv2FATpU49SmUMIzSfYNZTUEM2_zqme5Ga7EFXJEQDF9qxcMDWssKqjT1NO5hAkX6Syo-Jf4cIfTraVdJ0dNM81zV55XIoMrK1bIdxq9Yyqs_NE1cDRh_hNHRlDwCVEn9Wakr7nnQ_oGkzRL2Sf8DMHp2vxCzukuIZVDER3wSJl5SaolTjT8U09QnsZ-c6akOKk3Asqt8lVKdHb2d2F1nc1uCpzLH7Y0Kgesx5xxGeiQjv7Xhw1qZFg"; // 발급받은 API Key 값
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
+    <>
+      <button
+        onClick={() => {
+          searchAPITest(auth, url, {
+            search_keyword: "핸드 오브 카브리오", // API QueryString (“문서” 메뉴 하위의 검색 Parameters 값 참고)
+            sale: false,
+          }).then((data) => {
+            setContents(data.contents);
+            // console.log(data); // 응답값을 출력
+          });
+        }}>
+        API TEST
+      </button>
+      <>
+        {contents.map((value: ItemProps) => {
+          const {
+            image,
+            avg_unit_price,
+            enchant_level,
+            grade,
+            item_id,
+            item_name,
+            now_min_unit_price,
+            server_id,
+            server_name,
+            world,
+          } = value;
+          return (
+            <Item
+              key={item_id}
+              image={image}
+              avg_unit_price={avg_unit_price}
+              enchant_level={enchant_level}
+              grade={grade}
+              item_id={item_id}
+              item_name={item_name}
+              now_min_unit_price={now_min_unit_price}
+              server_id={server_id}
+              server_name={server_name}
+              world={world}
             />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://beta.nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+          );
+          // <Image alt='t' src={value.image} width={200} height={200} />;
+        })}
+      </>
+    </>
+  );
 }
