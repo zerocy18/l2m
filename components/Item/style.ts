@@ -16,8 +16,9 @@ const ItemDataContainer = styled.div`
 const ImageContainer = styled.div`
   position: relative;
   :nth-of-type(1) {
-    grid-row: 1 / span 2;
+    grid-row: 1 / span 3;
   }
+  cursor: pointer;
 `;
 
 const PriceContainer = styled.div`
@@ -29,6 +30,7 @@ const NameContainer = styled.span<{ grade: string }>`
   font-size: 20px;
   color: ${(props) => props.grade};
   align-self: center;
+  cursor: pointer;
 `;
 
 const EnchantContainer = styled.span`
